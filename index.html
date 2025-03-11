@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Colins DB Counter</title>
+  <!-- Manifest verlinken, falls vorhanden -->
+  <link rel="manifest" href="manifest.json">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 2em;
+      background-color: #272323; /* Schwarz */
+      color: #fff;            /* Weiß */
+    }
+    h1 {
+      margin-bottom: 1em;
+    }
+    .counter-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap; /* Zeilenumbruch bei kleineren Bildschirmen */
+      gap: 2em;
+    }
+    .counter-section {
+      width: 150px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .counter-value {
+      font-size: 2em;
+      margin: 0.5em 0;
+    }
+    .counter-buttons {
+      margin: 0.5em 0;
+    }
+    button {
+      font-size: 1em;
+      padding: 0.5em 1em;
+      margin: 0 0.2em;
+    }
+    img {
+      max-width: 100px;
+      height: auto;
+      margin-bottom: 0.5em;
+    }
+  </style>
+  <script>
+    // Service Worker registrieren (optional)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('Service Worker registriert'))
+        .catch(err => console.error('Service Worker Fehler:', err));
+    }
+
+    // Lädt die Counter-Werte aus dem localStorage
+    function loadCounters() {
+      for (let i = 1; i <= 5; i++) {
+        const storedValue = localStorage.getItem('counter' + i);
+        const counterValue = storedValue ? parseInt(storedValue, 10) : 0;
+        document.getElementById('counter' + i).textContent = counterValue;
+      }
+    }
+
+    // Aktualisiert einen bestimmten Counter (increment oder decrement)
+    function updateCounter(counterId, delta) {
+      const counterElem = document.getElementById('counter' + counterId);
+      let currentValue = parseInt(counterElem.textContent, 10);
+      currentValue += delta;
+      // Optional: verhindern, dass der Wert negativ wird
+      if (currentValue < 0) {
+        currentValue = 0;
+      }
+      counterElem.textContent = currentValue;
+      localStorage.setItem('counter' + counterId, currentValue);
+    }
+
+    window.addEventListener('DOMContentLoaded', loadCounters);
+  </script>
+</head>
+<body>
+  <h1>Colins DB Counter</h1>
+  <h2>(Alle Zahlen bedeuten inklusive die jeweilige Folge)</h2>
+  <br>
+  <div class="counter-container">
+
+    <!-- Counter 1 -->
+    <div class="counter-section">
+      <p>Dragon Ball Classic</p>
+      <img src="image1.png" alt="Bild 1">
+      <div class="counter-value" id="counter1">0</div>
+      <div class="counter-buttons">
+        <button onclick="updateCounter(1, 1)">+</button>
+        <button onclick="updateCounter(1, -1)">-</button>
+      </div>
+    </div>
+
+    <!-- Counter 2 -->
+    <div class="counter-section">
+      <p>Dragon Ball Z</p>
+      <img src="image2.png" alt="Bild 2">
+      <div class="counter-value" id="counter2">0</div>
+      <div class="counter-buttons">
+        <button onclick="updateCounter(2, 1)">+</button>
+        <button onclick="updateCounter(2, -1)">-</button>
+      </div>
+    </div>
+
+    <!-- Counter 3 -->
+    <div class="counter-section">
+      <p>Dragon Ball GT</p>
+      <img src="image3.png" alt="Bild 3">
+      <div class="counter-value" id="counter3">0</div>
+      <div class="counter-buttons">
+        <button onclick="updateCounter(3, 1)">+</button>
+        <button onclick="updateCounter(3, -1)">-</button>
+      </div>
+    </div>
+
+    <!-- Counter 4 -->
+    <div class="counter-section">
+      <p>Dragon Ball Super</p>
+      <img src="image4.png" alt="Bild 4">
+      <div class="counter-value" id="counter4">0</div>
+      <div class="counter-buttons">
+        <button onclick="updateCounter(4, 1)">+</button>
+        <button onclick="updateCounter(4, -1)">-</button>
+      </div>
+    </div>
+
+    <!-- Counter 5 -->
+     <div class="counter-section">
+      <p>Dragon Ball Daima</p>
+      <img src="image5.png" alt="Bild 5">
+      <div class="counter-value" id="counter5">0</div>
+       <div class="counter-buttons">
+        <button onclick="updateCounter(4, 1)">+</button>
+        <button onclick="updateCounter(4, -1)">-</button>
+       </div>
+     </div>
+
+  </div>
+</body>
+</html>
