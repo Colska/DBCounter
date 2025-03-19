@@ -4,30 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Colins DB Counter</title>
-  <!-- Manifest verlinken, falls vorhanden -->
   <link rel="manifest" href="manifest.json">
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
       padding: 2em;
-      background-color: #272323; /* Schwarz */
-      color: #fff;            /* Weiß */
+      background-color: #272323;
+      color: #fff;
     }
     h1 {
       margin-bottom: 1em;
     }
-    .counter-container {
+    .counter-container, .movie-container {
       display: flex;
       justify-content: center;
-      flex-wrap: wrap; /* Zeilenumbruch bei kleineren Bildschirmen */
+      flex-wrap: wrap;
       gap: 2em;
+      align-items: flex-start;
     }
     .counter-section {
       width: 150px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      text-align: center;
+      min-height: 250px;
     }
     .counter-value {
       font-size: 2em;
@@ -46,49 +48,87 @@
       height: auto;
       margin-bottom: 0.5em;
     }
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 2em 0;
+    }
+    .divider-text {
+      font-size: 1.2em;
+      margin-right: 1em;
+    }
+    .divider-line {
+      flex-grow: 1;
+      height: 2px;
+      background-color: white;
+    }
   </style>
-  <script>
-    // Service Worker registrieren (optional)
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(() => console.log('Service Worker registriert'))
-        .catch(err => console.error('Service Worker Fehler:', err));
-    }
 
-    // Lädt die Counter-Werte aus dem localStorage
-    function loadCounters() {
-      for (let i = 1; i <= 5; i++) {
-        const storedValue = localStorage.getItem('counter' + i);
-        const counterValue = storedValue ? parseInt(storedValue, 10) : 0;
-        document.getElementById('counter' + i).textContent = counterValue;
+<script>
+  // Service Worker registrieren (optional)
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(() => console.log('Service Worker registriert'))
+      .catch(err => console.error('Service Worker Fehler:', err));
+  }
+
+  // Lädt die Counter-Werte aus dem localStorage
+  function loadCounters() {
+    for (let i = 1; i <= 6; i++) {
+      const storedValue = localStorage.getItem('counter' + i);
+      const counterValue = storedValue ? parseInt(storedValue, 10) : 0;
+      document.getElementById('counter' + i).textContent = counterValue;
+    }
+  }
+
+  // Aktualisiert einen bestimmten Counter (increment oder decrement)
+  function updateCounter(counterId, delta) {
+    const counterElem = document.getElementById('counter' + counterId);
+    let currentValue = parseInt(counterElem.textContent, 10);
+    currentValue += delta;
+    // Optional: verhindern, dass der Wert negativ wird
+    if (currentValue < 0) {
+      currentValue = 0;
+    }
+    counterElem.textContent = currentValue;
+    localStorage.setItem('counter' + counterId, currentValue);
+  }
+
+  // Speichert den Zustand der Checkboxen
+  function saveCheckboxState() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach((checkbox) => {
+      localStorage.setItem(checkbox.id, checkbox.checked);
+    });
+  }
+
+  // Lädt den gespeicherten Zustand der Checkboxen
+  function loadCheckboxes() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach((checkbox) => {
+      const savedState = localStorage.getItem(checkbox.id);
+      if (savedState !== null) {
+        checkbox.checked = savedState === 'true';
       }
-    }
+      checkbox.addEventListener('change', saveCheckboxState);
+    });
+  }
 
-    // Aktualisiert einen bestimmten Counter (increment oder decrement)
-    function updateCounter(counterId, delta) {
-      const counterElem = document.getElementById('counter' + counterId);
-      let currentValue = parseInt(counterElem.textContent, 10);
-      currentValue += delta;
-      // Optional: verhindern, dass der Wert negativ wird
-      if (currentValue < 0) {
-        currentValue = 0;
-      }
-      counterElem.textContent = currentValue;
-      localStorage.setItem('counter' + counterId, currentValue);
-    }
+  window.addEventListener('DOMContentLoaded', () => {
+    loadCounters();
+    loadCheckboxes();
+  });
+</script>
 
-    window.addEventListener('DOMContentLoaded', loadCounters);
-  </script>
 </head>
 <body>
-  <h1>Colins DB Counter</h1>
-  <h2>(Alle Zahlen bedeuten inklusive die jeweilige Folge)</h2>
-  <br>
+  <h1>DB Counter</h1>
+  
+  <!-- Serien (mit Counter) -->
   <div class="counter-container">
 
-    <!-- Counter 1 -->
     <div class="counter-section">
-      <p>Dragon Ball Classic</p>
+      <p>Dragonball Classic</p>
       <img src="image1.png" alt="Bild 1">
       <div class="counter-value" id="counter1">0</div>
       <div class="counter-buttons">
@@ -97,9 +137,8 @@
       </div>
     </div>
 
-    <!-- Counter 2 -->
     <div class="counter-section">
-      <p>Dragon Ball Z</p>
+      <p>Dragonball Z</p>
       <img src="image2.png" alt="Bild 2">
       <div class="counter-value" id="counter2">0</div>
       <div class="counter-buttons">
@@ -107,10 +146,9 @@
         <button onclick="updateCounter(2, -1)">-</button>
       </div>
     </div>
-
-    <!-- Counter 3 -->
+    
     <div class="counter-section">
-      <p>Dragon Ball GT</p>
+      <p>Dragonball GT</p>
       <img src="image3.png" alt="Bild 3">
       <div class="counter-value" id="counter3">0</div>
       <div class="counter-buttons">
@@ -119,9 +157,8 @@
       </div>
     </div>
 
-    <!-- Counter 4 -->
     <div class="counter-section">
-      <p>Dragon Ball Super</p>
+      <p>Dragonball Super</p>
       <img src="image4.png" alt="Bild 4">
       <div class="counter-value" id="counter4">0</div>
       <div class="counter-buttons">
@@ -130,17 +167,193 @@
       </div>
     </div>
 
-    <!-- Counter 5 -->
-     <div class="counter-section">
-      <p>Dragon Ball Daima</p>
+    <div class="counter-section">
+      <p>Super Dragonball Heroes</p>
       <img src="image5.png" alt="Bild 5">
       <div class="counter-value" id="counter5">0</div>
-       <div class="counter-buttons">
+      <div class="counter-buttons">
         <button onclick="updateCounter(5, 1)">+</button>
         <button onclick="updateCounter(5, -1)">-</button>
-       </div>
-     </div>
+      </div>
+    </div>
+
+    <div class="counter-section">
+      <p>Dragonball Daima</p>
+      <img src="image6.png" alt="Bild 6">
+      <div class="counter-value" id="counter6">0</div>
+      <div class="counter-buttons">
+        <button onclick="updateCounter(6, 1)">+</button>
+        <button onclick="updateCounter(6, -1)">-</button>
+      </div>
+    </div>
 
   </div>
+
+  <!-- Trennbalken -->
+  <div class="divider">
+    <span class="divider-text">Filme nach Dragonball Classic</span>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- Filme (mit Checkboxen) -->
+  <div class="movie-container">
+
+    <div class="counter-section">
+      <p>Dragonball: Die Legende von Shenlong</p>
+      <img src="movie1.png" alt="Movie1">
+      <input type="checkbox" id="movie1">
+    </div>
+
+    <div class="counter-section">
+      <p>Dragonball: Das Schloss der Dämonen</p>
+      <img src="movie2.png" alt="Movie2">
+      <input type="checkbox" id="movie2">
+    </div>
+
+    <div class="counter-section">
+      <p>Dragonball: Son Gokus erstes Tunier</p>
+      <img src="movie3.png" alt="Movie3">
+      <input type="checkbox" id="movie3">
+    </div>
+
+    <div class="counter-section">
+      <p>Dragonball: Der Weg zur Macht</p>
+      <img src="movie4.png" alt="Movie4">
+      <input type="checkbox" id="movie4">
+    </div>
+
+  </div>
+
+  <div class="divider">
+    <span class="divider-text">Filme nach Dragonball Z</span>
+    <div class="divider-line"></div>
+  </div>
+
+  <div class="movie-container">
+
+    <div class="counter-section">
+      <p>Dragonball: Die Todeszone des Garlic Jr.</p>
+      <img src="movie5.png" alt="Movie5">
+      <input type="checkbox" id="movie5">
+    </div>
+
+    <div class="counter-section">
+      <p>Dragonball: Der Stärkste auf Erden</p>
+      <img src="movie6.png" alt="Movie6">
+      <input type="checkbox" id="movie6">
+    </div>
+
+    <div class="counter-section">
+      <p>Dragonball: Die Entscheidungsschlacht</p>
+      <img src="movie7.png" alt="Movie7">
+      <input type="checkbox" id="movie7">
+    </div>
+
+    <div class="counter-section">
+      <p>Dragonball: Super Saiyajin Son Goku</p>
+      <img src="movie8.png" alt="Movie8">
+      <input type="checkbox" id="movie8">
+    </div>
+
+    <div class="counter-section">
+      <p>Dragonball: Coolers Rückkehr</p>
+      <img src="movie9.png" alt="Movie9">
+      <input type="checkbox" id="movie9">
+    </div>
+
+    <div class="counter-section">
+      <p>Dragonball: Angriff der Cyborgs</p>
+      <img src="movie10.png" alt="Movie10">
+      <input type="checkbox" id="movie10">
+    </div>
+
+    <div class="counter-section">
+      <p>Dragonball: Super Saiyajin Son Gohan</p>
+      <img src="movie11.png" alt="Movie11">
+      <input type="checkbox" id="movie11">
+    </div>
+
+    <div class="counter-section">
+      <p>Dragonball: Plan zur Beseitigung der Super Saiyajin</p>
+      <img src="movie12.png" alt="Movie12">
+      <input type="checkbox" id="movie12">
+    </div>
+
+    <div class="counter-section">
+      <p>Dragonball: Die Geschichte von Trunks</p>
+      <img src="movie13.png" alt="Movie13">
+      <input type="checkbox" id="movie13">
+    </div>
+
+    <div class="counter-section">
+      <p>Dragonball: Brolys Rückkehr</p>
+      <img src="movie14.png" alt="Movie14">
+      <input type="checkbox" id="movie14">
+    </div>
+
+    <div class="counter-section">
+      <p>Dragonball: Angriff der Bio-Kämpfer</p>
+      <img src="movie15.png" alt="Movie15">
+      <input type="checkbox" id="movie15">
+    </div>
+
+    <div class="counter-section">
+      <p>Dragonball: Fusion Reborn</p>
+      <img src="movie16.png" alt="Movie16">
+      <input type="checkbox" id="movie16">
+    </div>
+
+    <div class="counter-section">
+      <p>Dragonball: Drachenfaust Ryuuken</p>
+      <img src="movie17.png" alt="Movie17">
+      <input type="checkbox" id="movie17">
+    </div>
+
+    <div class="counter-section">
+      <p>Dragonball: Der Film</p>
+      <img src="movie18.png" alt="Movie18">
+      <input type="checkbox" id="movie18">
+    </div>
+
+    <div class="counter-section">
+      <p>Dragonball: Kampf der Götter</p>
+      <img src="movie19.png" alt="Movie19">
+      <input type="checkbox" id="movie19">
+    </div>
+
+    <div class="counter-section">
+      <p>Dragonball: Resurrection F</p>
+      <img src="movie20.png" alt="Movie20">
+      <input type="checkbox" id="movie20">
+    </div>
+
+  </div>
+
+  <div class="divider">
+    <span class="divider-text">Filme nach Dragonball Super</span>
+    <div class="divider-line"></div>
+  </div>
+
+  <div class="movie-container">
+    <div class="counter-section">
+      <p>Dragonball Super: Broly</p>
+      <img src="movie21.png" alt="Movie21">
+      <input type="checkbox" id="movie21">
+    </div>
+  </div>
+
+  <div class="divider">
+    <span class="divider-text">Filme nach Super Dragonball Heroes</span>
+    <div class="divider-line"></div>
+  </div>
+
+  <div class="movie-container">
+    <div class="counter-section">
+      <p>Dragonball Super: Super Heroes</p>
+      <img src="movie22.png" alt="Movie22">
+      <input type="checkbox" id="movie22">
+    </div>
+  </div>
+
 </body>
 </html>
